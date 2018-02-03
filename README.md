@@ -2,7 +2,6 @@
 
 ---
 
-
 #### :point_right: 乐观锁
 
 分为三个阶段：数据读取、写入校验、数据写入。
@@ -28,13 +27,9 @@ https://github.com/aalansehaiyang/technology-talk/blob/master/system-architectur
 
 可重入锁，也叫做递归锁，是指在同一个线程在调外层方法获取锁的时候，再进入内层方法会自动获取锁。ReentrantLock 和synchronized 都是 可重入锁。可重入锁的一个好处是可一定程度避免死锁。
 
-示例：$Link {com.lock.reentrant.ReentrantTest}
-
 http://ifeve.com/java_lock_see4/
 
-#### :point_right: 互斥锁
-
-#### :point_right: 读写锁
+代码示例：$Link {com.lock.reentrant.ReentrantTest}
 
 #### :point_right: 自旋锁
 
@@ -44,11 +39,31 @@ http://ifeve.com/java_lock_see4/
 
 http://ifeve.com/java_lock_see1/
 
+代码示例：$Link {com.lock.spin.SpinLockTest}
+
 #### :point_right: 独享锁
 
-https://www.cnblogs.com/lxmyhappy/p/7380073.html
+独享锁是指该锁一次只能被一个线程所持有，ReentrantLock 是独享锁；Synchronized也是独享锁。
 
 #### :point_right: 共享锁
+
+共享锁是指该锁可被多个线程所持有。ReentrantReadWriteLock，其读锁是共享锁，其写锁是独享锁。读锁的共享锁可保证并发读是非常高效的，读写、写读、写写的过程是互斥的。独享锁与共享锁也是通过AQS（AbstractQueuedSynchronizer）来实现的，通过实现不同的方法，来实现独享或者共享。
+
+#### :point_right: 互斥锁
+
+独享锁/共享锁就是一种广义的说法，互斥锁/读写锁指具体的实现。
+
+互斥锁在Java中的具体实现就是ReentrantLock
+
+#### :point_right: 读写锁
+
+读写锁在Java中的具体实现就是ReentrantReadWriteLock
+
+http://blog.csdn.net/yanyan19880509/article/details/52435135
+
+http://blog.csdn.net/eson_15/article/details/51553614
+
+代码示例：$Link {com.lock.readwrite.ReentrantReadWriteLockTest}
 
 #### :point_right: 阻塞锁
 
@@ -59,9 +74,80 @@ JAVA中，能够进入\退出、阻塞状态或包含阻塞锁的方法有 ，sy
 http://ifeve.com/java_lock_see3/
 
 #### :point_right: 公平锁
+
+公平锁是指多个线程按照申请锁的顺序来获取锁
+
 #### :point_right: 非公平锁
-#### :point_right: 偏向锁
+
+非公平锁是指多个线程获取锁的顺序并不是按照申请锁的顺序，有可能后申请的线程比先申请的线程优先获取锁。
+
+可能造成优先级反转或者饥饿现象。对于Java ReentrantLock而言，通过构造函数 ReentrantLock(boolean fair) 指定该锁是否是公平锁，默认是非公平锁。
+
+非公平锁的优点在于吞吐量比公平锁大。对于Synchronized而言，也是一种非公平锁。
+
+#### :point_right: 分段锁
+
+分段锁其实是一种锁的设计，目的是细化锁的粒度，并不是具体的一种锁，对于ConcurrentHashMap而言，其并发的实现就是通过分段锁的形式来实现高效的并发操作。
+
+ConcurrentHashMap中的分段锁称为Segment，它即类似于HashMap（JDK7与JDK8中HashMap的实现）的结构，即内部拥有一个Entry数组，数组中的每个元素又是一个链表；同时又是一个ReentrantLock（Segment继承了ReentrantLock)。
+
+当需要put元素的时候，并不是对整个HashMap加锁，而是先通过hashcode知道要放在哪一个分段中，然后对这个分段加锁，所以当多线程put时，只要不是放在一个分段中，可支持并行插入。
+
+
 #### :point_right: 对象锁
-#### :point_right: 线程锁
+
+一个线程可以多次对同一个对象上锁。对于每一个对象，java虚拟机维护一个加锁计数器，线程每获得一次该对象，计数器就加1，每释放一次，计数器就减 1，当计数器值为0时，锁就被完全释放了。
+
+在java程序中，只需要使用synchronized块或者synchronized方法就可以标志一个监视区域。当每次进入一个监视区域时，java 虚拟机都会自动锁上对象或者类。
+
+synchronized修饰非静态方法、同步代码块的synchronized (this)、synchronized (非this对象)，锁的是对象，线程想要执行对应同步代码，需要获得对象锁。
+
+http://blog.csdn.net/u013142781/article/details/51697672
+
+代码示例：$Link {com.lock.object.SynchronizedMethod}
+
+代码示例：$Link {com.lock.object.SynchronizedThis}
+
+代码示例：$Link {com.lock.object.SynchronizedObject}
+
+#### :point_right: 类锁
+
+synchronized修饰静态方法或者同步代码块的synchronized (类.class)，线程想要执行对应同步代码，需要获得类锁。
+
+代码示例：$Link {com.lock.class1.SynchronizedStaticMethod}
+
+代码示例：$Link {com.lock.class1.SynchronizedClass}
+
 #### :point_right: 信号量
+
+Semaphore是用来保护一个或者多个共享资源的访问，Semaphore内部维护了一个计数器，其值为可以访问的共享资源的个数。一个线程要访问共享资源，先获得信号量，如果信号量的计数器值大于1，意味着有共享资源可以访问，则使其计数器值减去1，再访问共享资源。
+
+如果计数器值为0,线程进入休眠。当某个线程使用完共享资源后，释放信号量，并将信号量内部的计数器加1，之前进入休眠的线程将被唤醒并再次试图获得信号量。
+
+代码示例：$Link {com.lock.semaphore.SemaphoreTest}
+
+#### :point_right: 其它
+
+```
+Synchronized：非公平，悲观，独享，互斥，可重入的重量级锁
+ReentrantLock：默认非公平但可实现公平的，悲观，独享，互斥，可重入，重量级锁。
+ReentrantReadWriteLocK：默认非公平但可实现公平的，悲观，写独享，读共享，读写，可重入，重量级锁。
+```
+
+线程A和B都要获取对象o的锁定，假设A获取了对象o锁，B将等待A释放对o的锁定
+
+* synchronized ，如果A不释放，B将一直等下去，不能被中断
+* ReentrantLock，如果A不释放，可以使B在等待了足够长的时间以后，中断等待，而干别的事情
+
+ReentrantLock获取锁定有三种方式：
+
+* lock()， 如果获取了锁立即返回，如果别的线程持有锁，当前线程则一直处于休眠状态，直到获取锁
+ 
+* tryLock()， 如果获取了锁立即返回true，如果别的线程正持有锁，立即返回false
+
+* tryLock(long timeout,TimeUnit unit)， 如果获取了锁定立即返回true，如果别的线程正持有锁，会等待参数给定的时间，在等待的过程中，如果获取了锁定，就返回true，如果等待超时，返回false；
+
+* lockInterruptibly()，如果获取了锁定立即返回，如果没有获取锁，当前线程处于休眠状态，直到获取锁定，或者当前线程被别的线程中断
+
+
 
