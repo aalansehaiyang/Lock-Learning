@@ -43,7 +43,11 @@ http://ifeve.com/java_lock_see1/
 
 #### :point_right: 独享锁
 
-独享锁是指该锁一次只能被一个线程所持有，ReentrantLock 是独享锁；Synchronized也是独享锁。
+独享锁是指该锁一次只能被一个线程所持有。
+
+ReentrantLock 、Synchronized 都是独享锁。
+
+http://wiki.jikexueyuan.com/project/java-concurrency/lock.html
 
 #### :point_right: 共享锁
 
@@ -130,8 +134,8 @@ Semaphore是用来保护一个或者多个共享资源的访问，Semaphore内�
 
 ```
 Synchronized：非公平，悲观，独享，互斥，可重入的重量级锁
-ReentrantLock：默认非公平但可实现公平的，悲观，独享，互斥，可重入，重量级锁。
-ReentrantReadWriteLocK：默认非公平但可实现公平的，悲观，写独享，读共享，读写，可重入，重量级锁。
+ReentrantLock：默认非公平但可实现公平的(构造器传true)，悲观，独享，互斥，可重入，重量级锁。
+ReentrantReadWriteLocK：默认非公平但可实现公平的(构造器传true)，悲观，写独享，读共享，读写，可重入，重量级锁。
 ```
 
 线程A和B都要获取对象o的锁定，假设A获取了对象o锁，B将等待A释放对o的锁定
