@@ -47,7 +47,7 @@ http://ifeve.com/java_lock_see1/
 
 ReentrantLock 、Synchronized 都是独享锁。
 
-http://wiki.jikexueyuan.com/project/java-concurrency/lock.html
+http://blog.csdn.net/ns_code/article/details/17487337
 
 #### :point_right: 共享锁
 
@@ -93,9 +93,9 @@ http://ifeve.com/java_lock_see3/
 
 分段锁其实是一种锁的设计，目的是细化锁的粒度，并不是具体的一种锁，对于ConcurrentHashMap而言，其并发的实现就是通过分段锁的形式来实现高效的并发操作。
 
-ConcurrentHashMap中的分段锁称为Segment，它即类似于HashMap（JDK7与JDK8中HashMap的实现）的结构，即内部拥有一个Entry数组，数组中的每个元素又是一个链表；同时又是一个ReentrantLock（Segment继承了ReentrantLock)。
+ConcurrentHashMap中的分段锁称为Segment，它即类似于HashMap（JDK7 中HashMap的实现）的结构，即内部拥有一个Entry数组，数组中的每个元素又是一个链表；同时又是一个ReentrantLock（Segment继承了ReentrantLock)。
 
-当需要put元素的时候，并不是对整个HashMap加锁，而是先通过hashcode知道要放在哪一个分段中，然后对这个分段加锁，所以当多线程put时，只要不是放在一个分段中，可支持并行插入。
+当需要put元素的时候，并不是对整个HashMap加锁，而是先通过hashcode知道要放在哪一个分段中，然后对这个分段加锁，所以当多线程put时，只要不是放在同一个分段中，可支持并行插入。
 
 
 #### :point_right: 对象锁
@@ -129,6 +129,21 @@ Semaphore是用来保护一个或者多个共享资源的访问，Semaphore内�
 如果计数器值为0,线程进入休眠。当某个线程使用完共享资源后，释放信号量，并将信号量内部的计数器加1，之前进入休眠的线程将被唤醒并再次试图获得信号量。
 
 代码示例：$Link {com.lock.semaphore.SemaphoreTest}
+
+#### :point_right: 条件变量Condition
+
+条件变量很大一个程度上是为了解决Object.wait/notify/notifyAll难以使用的问题。
+
+有人会问，如果一个线程lock() 后被挂起还没有执行unlock()，那么另外一个线程就拿不到锁，那么就无法唤醒前一个线程signal()，这样岂不是“死锁”了？
+
+```
+解释：
+进入lock.lock()后唯一可能释放锁的操作就是await()。也就是说await()操作实际上就是释放锁，然后挂起线程，一旦条件满足就被唤醒，再次获取锁！
+```
+
+http://blog.csdn.net/vernonzheng/article/details/8288251
+
+代码示例：$Link {com.lock.condition.ConditionDemo}
 
 #### :point_right: 其它
 
