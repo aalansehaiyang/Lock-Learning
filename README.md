@@ -145,6 +145,45 @@ http://blog.csdn.net/vernonzheng/article/details/8288251
 
 代码示例：$Link {com.lock.condition.ConditionDemo}
 
+#### :point_right: 行级锁
+
+
+行级锁是数据库引擎中对记录更新的时候引擎本身上的锁，是数据库引擎的一部分，在数据库引擎更新一条数据的时候，本身就会对记录上锁，这时候即使有多个请求更新，也不会产生脏数据，行级锁的粒度非常细，上锁的时间窗口也最少，只有更新数据记录的那一刻，才会对记录上锁，因此，能大大减少数据库操作的冲突，发生锁冲突的概率最低，并发度也最高。
+
+通常在扣减库存的场景下使用行级锁，这样可以通过数据库引擎本身对记录加锁的控制，保证数据库的更新的安全性，并且通过where语句的条件，保证库存不会被减到0以下，也就是能够有效的控制超卖的场景。
+
+```
+update ... set amount = amount - 1 where id = $id and amount - 1 >=0 
+```
+
+另外一种场景是在状态转换的时候使用行级锁，例如交易引擎中，状态只能从init流转到doing状态，任何重复的从init到doing的流转，或者从init到finished等其他状态的流转都会失败。
+
+```
+boolean result = executeSql("update ... set status = 'doing' where id = $id and status = 'init'"); 
+if (result) 
+	{   // process sucessful logic } 
+else 
+	{   // process failure logic }
+```
+
+行级锁的并发性较高，性能是最好的，适用于高并发下扣减库存和控制状态流转的方向的场景。
+
+但是，有人说这种方法是不能保证幂等的，比如说，在扣减余额场景，多次提交可能会扣减多次，这确实是实际存在的，但是，我们是有应对方案的，我们可以记录扣减的操作日志，如果有非幂等的场景出现，通过比较操作记录。
+
+```
+boolean result = executeSql("update ... set amount = amount - 1 where id = $id and amount > 1"); 
+if (result) 
+	{    executeSql("insert into hist (pre_amout, post_amout) values ($amount, $amount -1)");    
+	// process successful logic 
+	} else {
+	    // process failure logic 
+}
+```
+
+`在支付平台架构设计中，通常对交易和支付系统的流水表的状态流转的控制、对账户系统的状态控制，分账和退款余额的更新等，都推荐使用行级锁，而单独使用乐观锁和悲观锁是不推荐的。`
+
+
+
 #### :point_right: 其它
 
 ```
