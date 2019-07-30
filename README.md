@@ -207,7 +207,12 @@ ReentrantLock获取锁定有三种方式：
 
 * lockInterruptibly()，如果获取了锁定立即返回，如果没有获取锁，当前线程处于休眠状态，直到获取锁定，或者当前线程被别的线程中断
 
+ 
+ * [Java 各种锁的小结](https://mp.weixin.qq.com/s/_xazrXa8MBYaz2WaX6BNew)
 
-### 其它
+### 写在最后
 
-* [Java 各种锁的小结](https://mp.weixin.qq.com/s/_xazrXa8MBYaz2WaX6BNew)
+
+**收到一些热衷于技术的同学反馈，考虑github实时通知不是特别好，以后时间里，一些技术经验总结、心得体会，会不定期同步一份到微信公众号上，欢迎关注，多多交流，共同进步**
+
+![image](doc/img/qrcode_for_gh_4461eb8b8689_258.jpg)
