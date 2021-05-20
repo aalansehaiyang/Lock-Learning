@@ -2,6 +2,25 @@
 
 ---
 
+### 个人介绍
+
+计算机专业出身，研究僧，阿里架构师。写过专利，竞赛拿过奖，CSDN博客专家。负责过电商交易、社区团购、营销、金融等业务。多年团队管理经验，爱思考，热衷把工作沉淀写成文章
+
+**近期整理多个技术专栏，发布在微信公众号：** [微观技术](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI5NDAwMzM0MA==&action=getalbum&album_id=1722799145553330176#wechat_redirect) **。欢迎扫描下方↓↓↓ 二维码 关注**
+
+
+1、【Spring Boot 生态之开源框架实战】基于spring boot的常用中间件快速集成入门系列手册，包含  [Mybatis、druid、Data JPA、Redis、Sharding-sphere、Guava、Caffeine、Ehcache、ElasticSearch、Kafka、Pulsar、Apollo、Nacos、OkHttp、HttpClient、gRPC、Dubbo、Seata]()，等几十个常用开源框架
+
+2、【电商会员营销】几十种营销活动的扩展性玩法如何架构
+
+3、【团队管理】组团打怪升级，需要具备哪些管理技能
+
+4、【性能架构】“三高”系统的各种架构设计经验
+
+![image](weiguanjishu.jpg)
+
+---
+
 #### :point_right: 乐观锁
 
 分为三个阶段：数据读取、写入校验、数据写入。
